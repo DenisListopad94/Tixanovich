@@ -1,0 +1,149 @@
+1.	Создать таблицы с данными согласно спроектированной схеме. 
+Заполнить предоставленными данными.
+CREATE TABLE "actors" (
+	"actors_id"	INTEGER NOT NULL,
+	"name"	TEXT NOT NULL,
+	"surname"	TEXT NOT NULL,
+	"age"	INTEGER NOT NULL,
+	"sex"	TEXT NOT NULL DEFAULT 'sex = "m" OR sex = "f"',
+	PRIMARY KEY("actors_id" AUTOINCREMENT));
+	
+CREATE TABLE "movies" (
+	"movie_id"	INTEGER NOT NULL,
+	"name_movie"	TEXT NOT NULL,
+	"release"	INTEGER NOT NULL,
+	"budjet"	INTEGER NOT NULL,
+	"director_id"	INTEGER,
+	PRIMARY KEY("movie_id" AUTOINCREMENT));
+	
+CREATE TABLE "actors_movies" (
+	"actors_movies_id"	INTEGER NOT NULL,
+	"movies_id "	INTEGER,
+	"actors_id"	INTEGER,
+	PRIMARY KEY("actors_movies_id" AUTOINCREMENT));
+	
+CREATE TABLE "directors" (
+	"director_id"	INTEGER NOT NULL,
+	"name"	TEXT NOT NULL,
+	"surname"	TEXT NOT NULL,
+	"age"	INTEGER NOT NULL,
+	"sex"	TEXT NOT NULL CHECK('sex = "m" OR sex = "f"'),
+	PRIMARY KEY("director_id" AUTOINCREMENT));
+
+CREATE TABLE "Bank_accounts" (
+	"bank_account_id"	INTEGER NOT NULL,
+	"director_id"	INTEGER,
+	"actors_id"	INTEGER,
+	"account_number"	INTEGER UNIQUE,
+	PRIMARY KEY("bank_account_id" AUTOINCREMENT));
+-----------------------
+2.	Добавить новое поле finance INTEGER в таблицу bank_accounts значение задать NULL.
+
+ALTER TABLE "bank_accounts" ADD COLUMN "finance" INTEGER DEFAULT NULL;
+
+-----------------------
+3.	Вывести первых 10  режиссёров, которые сняли высокобюджетные фильмы. Режиссёры не должны повторяться.
+
+SELECT DISTINCT directors.name, directors.surname
+FROM directors
+JOIN movies ON directors.director_id = movies.director_id
+WHERE movies.budjet > 10000000
+LIMIT 10;
+
+-----------------------
+4.	Вывести актёров и режиссёров, которые не участвовали не в одном из фильмов.
+
+SELECT actors.name, actors.surname
+FROM actors
+LEFT JOIN actors_movies ON actors.actors_id = actors_movies.actors_id
+WHERE actors_movies.actors_movies_id IS NULL;
+
+SELECT directors.name, directors.surname
+FROM directors
+LEFT JOIN movies ON directors.director_id = movies.director_id
+WHERE movies.movie_id IS NULL;
+
+-----------------------
+5.	Вывести все фильмы, а так же всех актёров кассовые сборы которых превысили 150 000 000.
+
+SELECT movies.name_movie, movies.budjet
+FROM movies
+WHERE movies.budjet > 150000000;
+
+SELECT DISTINCT actors.name, actors.surname
+FROM actors
+JOIN actors_movies ON actors.actors_id = actors_movies.actors_id
+JOIN movies ON actors_movies.movies_id = movies.movie_id
+WHERE movies.budjet > 150000000;
+
+-----------------------
+6.	Вывести всех режиссёров которые снимали фильмы до 2000 года. Режиссёры не должны повторятся
+
+SELECT DISTINCT directors.name, directors.surname, movies.name_movie, movies.release
+FROM directors
+JOIN movies ON directors.director_id = movies.director_id
+WHERE movies.release < 2000;
+
+-----------------------
+7.	Добавить фильмы для актёров и режиссёров, у которых нет зависимости в таблице movies. 
+Не забыть сделать изменения в таблице actors_movies.
+
+INSERT INTO actors (name, surname, age, sex)
+VALUES ("Matt","Damon",53,"m"),
+("Matthew","McConaughey",54,"m");
+
+UPDATE actors_movies SET actors_id = 15 WHERE actors_movies_id = 23;
+UPDATE actors_movies SET actors_id = 16 WHERE actors_movies_id = 24;
+
+INSERT INTO movies (name_movie, release, budjet, director_id)
+VALUES ("Shutter Island", 2010, 80000000, 16),
+("2001: A Space Odyssey", 1968, 12000000, 17),
+("A Rainy Day in New York", 2019, 25000000, 18);
+
+-----------------------
+8.	Добавить колонку rating к фильмам. Задать значения рейтинга фильмов. 
+
+ALTER TABLE movies ADD COLUMN "rating" INTEGER REAL;
+UPDATE movies SET rating = 9.2 WHERE movie_id = 1;
+UPDATE movies SET rating = 8.3 WHERE movie_id = 2;
+UPDATE movies SET rating = 9.3 WHERE movie_id = 3;
+UPDATE movies SET rating = 8.9 WHERE movie_id = 4;
+UPDATE movies SET rating = 7.9 WHERE movie_id = 5;
+UPDATE movies SET rating = 8.1 WHERE movie_id = 6;
+UPDATE movies SET rating = 7.8 WHERE movie_id = 7;
+UPDATE movies SET rating = 8.3 WHERE movie_id = 8;
+UPDATE movies SET rating = 8.7 WHERE movie_id = 9;
+UPDATE movies SET rating = 8.4 WHERE movie_id = 10;
+UPDATE movies SET rating = 7.8 WHERE movie_id = 11;
+UPDATE movies SET rating = 9.0 WHERE movie_id = 12;
+UPDATE movies SET rating = 8.7 WHERE movie_id = 13;
+UPDATE movies SET rating = 7.9 WHERE movie_id = 14;
+UPDATE movies SET rating = 7.5 WHERE movie_id = 15;
+UPDATE movies SET rating = 8.0 WHERE movie_id = 16;
+UPDATE movies SET rating = 8.7 WHERE movie_id = 17;
+UPDATE movies SET rating = 8.8 WHERE movie_id = 18;
+UPDATE movies SET rating = 9.3 WHERE movie_id = 19;
+UPDATE movies SET rating = 8.6 WHERE movie_id = 20;
+UPDATE movies SET rating = 9.5 WHERE movie_id = 21;
+UPDATE movies SET rating = 7.6 WHERE movie_id = 22;
+-----------------------
+9.	Вывести режиссёров и фильмы с рейтингом ниже среднего до 2000 года (8.64)
+
+SELECT AVG(movies.rating) as average_rating
+FROM movies
+WHERE release < 2000;
+
+
+SELECT directors.name, directors.surname, movies.name_movie, movies.rating
+FROM directors
+JOIN movies ON directors.director_id = movies.director_id
+WHERE movies.rating < (SELECT AVG(movies.rating) FROM movies WHERE release < 2000) AND movies.release < 2000;
+
+-----------------------
+10.	Вывести всех актёров, которые знакомы с 2-мя и более другими актёрами.
+
+SELECT actors.name, actors.surname
+FROM actors
+JOIN actors_movies ON actors.actors_id = actors_movies.actors_id
+GROUP BY actors.actors_id
+HAVING COUNT(DISTINCT actors_movies.movies_id) >= 2;
