@@ -205,65 +205,65 @@ with Session(engine) as session:
 ____________________________________________
 '''
 
-# from typing import List
-# from typing import Optional
-# from sqlalchemy import ForeignKey
-# from sqlalchemy import String
-# from sqlalchemy.orm import DeclarativeBase
-# from sqlalchemy.orm import Mapped
-# from sqlalchemy.orm import mapped_column
-# from sqlalchemy.orm import relationship
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import Session
-# from sqlalchemy import select
-#
-# class Base(DeclarativeBase):
-#     pass
-#
-#
-# class User(Base):
-#     __tablename__ = "user"
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     first_name: Mapped[str] = mapped_column()
-#     last_name: Mapped[str] = mapped_column(String(50))
-#     age: Mapped[int]
-#
-#
-# engine = create_engine("sqlite://", echo=True)
-# Base.metadata.create_all(engine)
-#
-# with Session(engine) as session:
-#     Travolta = User(
-#         first_name="John",
-#         last_name="Travolta",
-#         age=53
-#     )
-#     Jolie = User(
-#         first_name="Angelina",
-#         last_name="Jolie",
-#         age=47
-#     )
-#     Hanks = User(
-#          first_name="Tom",
-#          last_name="Hanks",
-#          age=66
-#     )
-#     Willis = User(
-#          first_name="Bruce",
-#          last_name="Willis",
-#          age=67
-#     )
-#     Bullock = User(
-#          first_name="Sandra",
-#          last_name="Bullock",
-#          age=58
-#     )
-#     session.add_all([Travolta, Jolie, Hanks, Willis, Bullock])
-#     session.commit()
-#
-# with Session(engine) as session:
-#
-#     stmt = select(User).where(User.first_name == "John")
-#     for user in session.scalars(stmt):
-#         print(user.first_name, user.last_name, user.age)
+from typing import List
+from typing import Optional
+from sqlalchemy import ForeignKey
+from sqlalchemy import String
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
+class Base(DeclarativeBase):
+    pass
+
+
+class User(Base):
+    __tablename__ = "user"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column()
+    last_name: Mapped[str] = mapped_column(String(50))
+    age: Mapped[int]
+
+
+engine = create_engine("sqlite://", echo=True)
+Base.metadata.create_all(engine)
+
+with Session(engine) as session:
+    Travolta = User(
+        first_name="John",
+        last_name="Travolta",
+        age=53
+    )
+    Jolie = User(
+        first_name="Angelina",
+        last_name="Jolie",
+        age=47
+    )
+    Hanks = User(
+         first_name="Tom",
+         last_name="Hanks",
+         age=66
+    )
+    Willis = User(
+         first_name="Bruce",
+         last_name="Willis",
+         age=67
+    )
+    Bullock = User(
+         first_name="Sandra",
+         last_name="Bullock",
+         age=58
+    )
+    session.add_all([Travolta, Jolie, Hanks, Willis, Bullock])
+    session.commit()
+
+with Session(engine) as session:
+
+    stmt = select(User).where(User.first_name == "John")
+    for user in session.scalars(stmt):
+        print(user.first_name, user.last_name, user.age)
 
